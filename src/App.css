@@ -1,0 +1,76 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 140px;
+  padding: 10px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.box {
+  width: 20%;
+  height: auto;
+  margin: 20px;
+  background-color: antiquewhite;
+  float: left;
+}
+
+.box ul {
+  margin: 0;
+  padding: 0;
+}
+
+.box li {
+  list-style: none;
+  padding: 15px;
+  border: 1px solid gray;
+  display: block;
+}
+
+.whobox  {
+}
+
+
+.whotip {
+  visibility: visible;
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  border-radius: 5px;
+  font-size: 60%;
+  padding: 2%;
+  margin-left: 2%;
+  margin-top: 2%;
+  background-color: lilac;
+  color: purple;
+
+}
+
+.whohometip {
+  background-color: pink;
+  color: red;
+}
+
+.whoawaytip {
+  background-color: lightyellow;
+  color: orange;
+
+}
