@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+//const random = require('lodash/fp/random');
+
+
 function Welcome(props) {
   return <div>Howdy {props.user}</div>
 }
@@ -76,25 +79,26 @@ const teamNames =
   Array.from({length: numteams}, (v,i) => "Team " + (i + 1))
 
 const teamObj = []
-for (var i=0; i<numteams; i++) {
+for (let i=0; i<numteams; i++) {
   teamObj.push(
-  {teamID:i, teamName:("Team " + (i + 1)), defaultOrder:i}
+  {teamID:i, teamName:("Team " + (i + 1)), defaultOrder:i, preferOrder:""}
   )
 }
-console.log(teamObj[0]);
+console.log(teamObj[11].defaultOrder);
+console.log(teamObj[5].teamName);
 
-var teamObjJson = JSON.stringify(teamObj);
+const teamObjJson = JSON.stringify(teamObj);
 console.log(teamObjJson);
 
 //-------------------------------------------------------------------------
   function OrigOrderTeamList(props) {
     const onDragStart = props.onDragStart;
-    const onDragOver = props.onDragOver;
-    const onDrop = props.onDrop;
+    const onDragEnd = props.onDragEnd;
     const listItems = teamIDs.map((teamID) =>
-      <li key={teamID.toString()} index={teamID.toString()}
-        draggable={true} onDragStart={onDragStart}
-        onDragOver={onDragOver} onDrop={onDrop}
+      <li key={teamID.toString()} data-teami={teamID.toString()}
+        data-deforder={teamID.toString()} data-preforder={""}
+        draggable={true}
+        onDragStart={onDragStart} onDragEnd={onDragEnd}
         >
         {teamNames[teamID]}
       </li>
@@ -106,16 +110,19 @@ console.log(teamObjJson);
 
 //-------------------------------------------------------------------------
 function PrefOrderTeamList(props) {
-  const onDragStart = props.onDragStart;
   const onDragOver = props.onDragOver;
   const onDrop = props.onDrop;
+  const onDragEnter = props.onDragEnter;
+  const onDragLeave = props.onDragLeave;
   const listItems = teamIDs.map((teamID) =>
-    <li key={teamID.toString()} draggable={true}
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
+    <li key={teamID.toString()} data-teami={teamID.toString()}
+      data-deforder={""} data-preforder={teamID.toString()}
+      onDragOver={onDragOver} onDragEnter={onDragEnter}
+      onDragLeave={onDragLeave}
       onDrop={onDrop}
+      style={{color:'lightgray'}}
       >
-      {teamNames[teamID]}
+      drag here
     </li>
   );
   return (
@@ -155,6 +162,8 @@ function WhoPlaysWhoList(props) {
   const onMouseEnter = props.onMouseEnter;
   const onMouseLeave = props.onMouseLeave;
   var teami = props.teami;
+  var team_Obj = props.team_Obj;
+  var hasPreferOrder = props.hasPreferOrder;
 
   const oppoHs = getHomeOpponentIDs(teami,numgames,numteams);
   const oppoAs = getAwayOpponentIDs(teami,numgames,numteams);
@@ -181,7 +190,7 @@ function WhoPlaysWhoList(props) {
     );
 
   function whoboxStyle (i, teami) {
-      if (i == teami) {return {background:'white', color:'black'} }
+      if (i === teami) {return {background:'white', color:'black'} }
       if (oppoAs.includes(i)) {return {background:'lightblue', color:'gray'} }
       if (oppoHs.includes(i)) {return {background:'lightgreen', color:'gray'} }
       else {return {background:'lightgray', color:'gray'} }
@@ -205,12 +214,20 @@ class App extends Component {
     super (props);
     this.state = {
       numteams: 12,
-      team_i: numteams / 2,
-    };
+      team_i: Math.ceil(numteams / 2),
+      hasPreferOrder: "false",
+      dragTeamID: "",
+      value: "snowdrop",
+      teamObj: teamObj,
 
-    this.handleClick = this.handleClick.bind(this);
-    this.allowDrop = this.allowDrop.bind(this);
+    };
+    this.handleClickClear = this.handleClickClear.bind(this);
+    this.handleClickSave = this.handleClickSave.bind(this);
     this.drag = this.drag.bind(this);
+    this.dragEnd = this.dragEnd.bind(this);
+    this.allowDrop = this.allowDrop.bind(this);
+    this.dragEnter = this.dragEnter.bind(this);
+    this.dragLeave = this.dragLeave.bind(this);
     this.drop = this.drop.bind(this);
     this.highlight = this.highlight.bind(this);
     this.unhighlight = this.unhighlight.bind(this);
@@ -230,22 +247,67 @@ tick() {
 }
 */
 
-  handleClick() {
-    this.setState.value = 'You Clicked';
+  handleClickClear(ev) {
+    for (let i = 0; i< teamObj.length; i++) {
+      teamObj[i].preferOrder = "";
+    }
+    var parent = ev.target.parentNode;
+    this.setState({value : parent.children[4].innerHTML,
+                   teamObj: teamObj});
   }
 
-  allowDrop(ev) {
+  handleClickSave(ev) {
+    const prefArray =
+      Array.from({length: this.state.teamObj.length}, (v,i) => this.state.teamObj[i].preferOrder);
+    var prefcheck;
+    if(prefArray.every(x => Number.isInteger(x))) {
+      prefcheck = "everybody has a pref";
+      this.setState({teamObj: teamObj});
+    } else {
+      prefcheck = "not everybody has a pref";
+    };
+    this.setState({value : prefcheck});
+  }
+
+
+  drag(ev) {   //  onDragStart
+      this.setState({dragTeamID: ev.target.dataset.teami });
+      ev.dataTransfer.setData("text/plain", ev.target.innerHTML);
+      ev.dataTransfer.effectAllowed = "move";
+      ev.target.style.backgroundColor = 'rgba(0,0,0,.5)';
+  }
+
+  dragEnd(ev) {   //refers to original element that is being dragged
+      ev.target.style.visibility = 'hidden';
+  }
+
+  // dragenter, dragover, dragleave, drop
+
+  dragEnter(ev) {   //refers to droppable zone
+    ev.target.style.border = '1px dashed blue';
+  }
+
+  dragLeave(ev) {   //refers to droppable zone
+    ev.target.style.border = '1px solid gray';
+  }
+
+  allowDrop(ev) {  //on DragOver
       ev.preventDefault();
-  }
-
-  drag(ev) {
-      ev.dataTransfer.setData("text", ev.target.id);
+      ev.dataTransfer.dropEffect = "move"  // Set the dropEffect to move
   }
 
   drop(ev) {
       ev.preventDefault();
-      var data = ev.dataTransfer.getData("text");
-      ev.target.appendChild(document.getElementById(data));
+      let defOrder  = parseInt(this.state.dragTeamID); //number
+      let prefOrder = parseInt(ev.target.dataset.preforder); //number
+      teamObj[defOrder].preferOrder = prefOrder ; // put number into teamObject
+      // this.setState({teamObj: teamObj}); //moved to ClickSave above
+
+      let teamname = ev.dataTransfer.getData("text");
+      ev.target.innerHTML= prefOrder + ".  " + teamname + "  " +
+      "(OrigOrder: "  + defOrder + ")";
+
+      ev.target.style.color="red";
   }
 
   highlight(ev) {
@@ -294,28 +356,42 @@ tick() {
           <div id='boxa' className='box'>
             <h2>Default Order</h2>
             <h4>Box A</h4>
-              <OrigOrderTeamList onDragStart={this.drag} onDrop={this.drop} onDragOver={this.allowDrop} />
+              <button></button>
+              <button></button>
+              <OrigOrderTeamList onDragStart={this.drag} onDragEnd={this.dragEnd} onDragEnter={this.dragEnter}
+                onDragLeave={this.dragLeave}
+                onDrop={this.drop} onDragOver={this.allowDrop} />
           </div>
 
           <div id='boxb' className='box'>
             <h2>Preferred Order</h2>
             <h4>Box B</h4>
-              <PrefOrderTeamList onDragStart={this.drag} onDrop={this.drop} onDragOver={this.allowDrop} />
+            <button onClick={this.handleClickClear}>Reset/Clear</button>
+            <button onClick={this.handleClickSave}>Save</button>
+              <PrefOrderTeamList onDrop={this.drop} onDragOver={this.allowDrop}
+              onDragLeave={this.dragLeave} onDragEnter={this.dragEnter} />
           </div>
 
           <div id='boxc' className='box'>
             <h2>Who Plays Who</h2>
             <h4>Box C</h4>
               <div id='whobox' className='whobox' style={{height:'100%', position:'relative', marginLeft:'20%'}}>
-                <WhoPlaysWhoList  onMouseEnter={this.highlight} onMouseLeave={this.unhighlight} teami={this.state.team_i} />
+                <WhoPlaysWhoList  onMouseEnter={this.highlight} onMouseLeave={this.unhighlight} teami={this.state.team_i}
+                hasPreferOrder={this.state.hasPreferOrder}
+                team_Obj={this.state.teamObj}/>
               </div>
           </div>
 
           <p>Your state: </p>
           <p>  this.state.numteams: {this.state.numteams}</p>
           <p>  this.state.team_i: {this.state.team_i}</p>
+          <p>  this.state.hasPreferOrder: {this.state.hasPreferOrder}</p>
+          <p>  this.state.dragTeamID: {this.state.dragTeamID}</p>
+          <p style={{fontSize:'50%'}}>this.state.teamObj:<br/>
+          {JSON.stringify(this.state.teamObj)}</p>
+          <p>  this.state.value: {this.state.value}</p>
 
-          <div id='boxa' className='box'>
+          <div id='boxd' className='box'>
             <h2>Put Test Functions Here</h2>
             <h4>Box D</h4>
               <div style={{fontSize:'100%', position:"relative"}}>

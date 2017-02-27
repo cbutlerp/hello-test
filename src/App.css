@@ -27,7 +27,7 @@
   width: 20%;
   height: auto;
   margin: 20px;
-  background-color: antiquewhite;
+  background-color: gray;
   float: left;
 }
 
@@ -39,7 +39,8 @@
 .box li {
   list-style: none;
   padding: 15px;
-  border: 1px solid gray;
+  border: 1px solid darkgray;
+  background-color: antiquewhite;
   display: block;
 }
 
