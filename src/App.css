@@ -14,6 +14,14 @@
   color: white;
 }
 
+.App-footer {
+  clear: both;
+  background-color: #222;
+  height: auto;
+  width:100%;
+  color: white;
+}
+
 .App-intro {
   font-size: large;
 }
@@ -27,32 +35,97 @@
   width: 20%;
   height: auto;
   margin: 20px;
-  background-color: gray;
+  background-color: #F3F3F3;
   float: left;
 }
 
 .box ul {
-  margin: 0;
+  margin: 10%;
   padding: 0;
+  width: 80%;
+  background-color: #F3F3F3;
 }
 
 .box li {
   list-style: none;
   padding: 15px;
-  border: 1px solid darkgray;
-  background-color: antiquewhite;
+  border: 1px solid #EFEFEF;
+  background-color: #fdf7ef;
   display: block;
 }
 
-.whobox  {
+.SortableList {
+    position: relative;
+    z-index: 0;
+    background-color: #F3F3F3;
+    border: 1px solid #EFEFEF;
+    border-radius: 3px;
+    outline: none;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #E0E0E0;
+    list-style: none;
+    padding: 0;
 }
 
+.SortableItem {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 15px;
+    background-color: #FFF;
+    border-bottom: 1px solid #EFEFEF;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.SortableHelper {
+    box-shadow: 0 5px 5px -5px rgba(0, 0, 0, 0.2), 0 -5px 5px -5px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.8);
+    cursor: row-resize;
+}
+
+.whoBox {
+  width: 40%;
+  height: auto;
+  margin: 20px;
+  background-color: #F3F3F3;
+  float: left;
+}
+
+.whoInnerBox {
+    position: relative;
+}
+
+.whoInnerBox ul {
+  padding: 0;
+  margin: 5%;
+  width: 40%;
+  background-color: #F3F3F3;
+}
+.whoInnerBox li {
+  list-style: none;
+  padding: 15px;
+  border: 1px solid #EFEFEF;
+  background-color: #fdf7ef;
+  color: #333;
+  display: block;
+}
 
 .whotip {
-  visibility: visible;
   display: inline-block;
   position: absolute;
-  left: 0;
+  left: 40%;
   top: 0;
   z-index: 3;
   border-radius: 5px;
@@ -60,18 +133,30 @@
   padding: 2%;
   margin-left: 2%;
   margin-top: 2%;
-  background-color: lilac;
-  color: purple;
-
 }
 
 .whohometip {
-  background-color: pink;
-  color: red;
+  background-color: white;
+  color: blue;
 }
 
 .whoawaytip {
-  background-color: lightyellow;
-  color: orange;
+  background-color: white;
+  color: purple;
+}
+
+.inputBox{
+  width: 80%;
+  margin: 10%;
+  background-color: white;
+  color: #333;
+}
+
+.testbox {
+  width: 20%;
+  height: auto;
+  margin: 20px;
+  background-color: #F3F3F3;
+  float: right;
 
 }
