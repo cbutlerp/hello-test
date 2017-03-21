@@ -47,8 +47,7 @@ function WhoPlaysWhoList(props) {
   const onMouseLeave = props.onMouseLeave;
   let groupi = props.groupi;
   let teami = props.teami;
-  let numgames = props.numgames;  //TODO won't need after groupArrObj fix
-  let group_ArrObj = props.group_ArrObj // put numgames in here
+  let group_ArrObj = props.group_ArrObj // get desiredgames in here
   let groupteamArrArr = props.groupteam_ArrArr;
 
   //let teams = groupteamArrArr[0];  //how to subset the 2 dim ArrArr
@@ -56,8 +55,7 @@ function WhoPlaysWhoList(props) {
   //console.log("teams[1]: " + JSON.stringify(teams[1]));
   let teams = groupteamArrArr[groupi];  //get only teams from groupi
   let numteams = teams.length;
-  // TODO: get the numgames on the groupArrObj
-  //let numgames = group_ArrObj[groupi].numgames;
+  let numgames = group_ArrObj[groupi].desiredGames;
 
   const oppoHs = getHomeOpponentIDs(teami,numgames,numteams);
   const oppoAs = getAwayOpponentIDs(teami,numgames,numteams);
@@ -68,7 +66,7 @@ function WhoPlaysWhoList(props) {
       return (top+'%') }
 
   const hSpans = oppoHs.map((oppoH, i) =>
-      <span  id={"h"+oppoH} className="whotip whohometip"
+      <span  key={i.toString()} id={"h"+oppoH} className="whotip whohometip"
         style={{ position:'absolute', top:whoTopStyle(oppoH)}}
         >
         {teams[teami].teamName} vs {teams[oppoH].teamName} -- Home<br/>
@@ -76,7 +74,7 @@ function WhoPlaysWhoList(props) {
     );
 
   const aSpans = oppoAs.map((oppoA, i) =>
-      <span  id={"a"+oppoA} className="whotip whoawaytip"
+      <span  key={i.toString()} id={"a"+oppoA} className="whotip whoawaytip"
         style={{ position:'absolute', top:whoTopStyle(oppoA)}}
         >
         {teams[oppoA].teamName} vs {teams[teami].teamName} -- Away<br/>
@@ -85,21 +83,22 @@ function WhoPlaysWhoList(props) {
 
   const iaSpan =
       <span id={"ta"+teami} className="whotip"
-        style={{ position:'absolute', top:whoTopStyle(teami-.5),
-        left:'41%', color:'purple', fontSize:'75%'}}
+        style={{ position:'absolute', top:whoTopStyle(teami-.3),
+        left:'35%', color:'purple', fontSize:'65%'}}
         >
         &#8593; Away Matchups &#8593;<br/>
       </span>
   const ihSpan =
       <span id={"th"+teami} className="whotip"
-        style={{ position:'absolute', top:whoTopStyle(teami+.35),
-        left:'41%', color: 'blue', fontSize:'75%'}}
+        style={{ position:'absolute', top:whoTopStyle(teami+.3),
+        left:'35%', color: 'blue', fontSize:'65%'}}
         >
         &#8595; Home Matchups &#8595;
       </span>
 
   function whoboxStyle (i, teami) {
-      if (i === teami) {return {background:'white', color:'black'} }
+      if (i === teami) {return {background:'white', color:'black',
+        boxShadow: '5px 5px 8px 5px rgba(0, 0, 0, 0.2), -5px -5px 8px 5px rgba(0, 0, 0, 0.2)'} }
       if (oppoAs.includes(i)) {return {background:'#fdf7ef'} }
       if (oppoHs.includes(i)) {return {background:'#fdf7ef'} }
       else {return {background:'#F3F3F3', color:'lightgray'} }
@@ -127,7 +126,8 @@ function DivButtons(props) {
   const onClick = props.onClick;
 
   const groupButtons = groups.map((group, i) =>
-     <button data-groupi={i.toString()} onClick={onClick} >
+     <button key={i.toString()} data-groupi={i.toString()} onClick={onClick}
+       style={{boxShadow:'3px 3px 2px 2px rgba(0, 0, 0, 0.2), 3px 5px 2px 2px rgba(0, 0, 0, 0.2)'}}>
          {group.groupName}
      </button>
   )

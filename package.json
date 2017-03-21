@@ -8,12 +8,16 @@
     "react-scripts": "0.8.5"
   },
   "dependencies": {
+    "babyparse": "^0.4.6",
     "date-fns": "^1.28.0",
     "lodash": "^4.17.4",
     "moment": "^2.17.1",
     "react": "^15.4.2",
     "react-datetime": "^2.8.8",
     "react-dom": "^15.4.2",
+    "react-download-link": "^1.0.0",
+    "react-dropzone": "^3.12.2",
+    "react-file-reader-input": "^1.1.0",
     "react-sortable-hoc": "^0.6.0"
   },
   "scripts": {
